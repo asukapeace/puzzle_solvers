@@ -53,19 +53,31 @@ def print_board(board):
             else:
                 print(str(board[i][j]) + " ", end="")
 
-if __name__ == '__main__':
-    board = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]
-    ]
+
+def get_board_from_user():
+    """
+    Get a Sudoku board from the user
+    """
+    board = []
+    for i in range(9):
+        row = input(f"Enter row {i+1} (space-separated numbers): ")
+        row = [int(x) if x != '0' else 0 for x in row.split()]
+        if len(row) != 9:
+            print("Invalid input. Please enter 9 numbers separated by spaces.")
+            return get_board_from_user()
+        board.append(row)
+    return board
+
+
+def main():
+    print("Welcome to the Sudoku solver!")
+    board = get_board_from_user()
     if solve_sudoku(board):
+        print("Solution:")
         print_board(board)
     else:
         print("No solution exists")
+
+
+if __name__ == "__main__":
+    main()
