@@ -1,22 +1,20 @@
 import random
 import string
 import requests
+import itertools
 
 def generate_random_string():
     """
     Generate a random 11 character string with at least 2 vowels
     """
     vowels = 'aeiou'
-    consonants = ''.join(set(string.ascii_lowercase) - set(vowels))
+    all_chars = list((string.ascii_lowercase))
     random_string = ''
     while len(random_string) < 11:
         if len(random_string) < 2:
             random_string += random.choice(vowels)
         else:
-            if random.random() < 0.5:
-                random_string += random.choice(vowels)
-            else:
-                random_string += random.choice(consonants)
+            random_string += random.choice(all_chars)
     return ''.join(random.sample(random_string, len(random_string)))
 
 def load_dictionary():
@@ -24,15 +22,28 @@ def load_dictionary():
     response = requests.get(url)
     return set(response.text.splitlines())
 
+def find_permutations(string, length):
+    if length == 0:
+        return []
+    elif length == 1:
+        return [char for char in string]
+    else:
+        permutations = []
+        for i in range(len(string)):
+            prefix = string[i]
+            suffix = string[:i] + string[i+1:]
+            for perm in find_permutations(suffix, length - 1):
+                permutations.append(prefix + perm)
+        return permutations
+    
 def generate_words(random_string, word_length, dictionary):
     """Generate all valid dictionary words of word_length from the 11 char string"""
-    words = set()
-    for i in range(len(random_string)):
-        for j in range(i + word_length, len(random_string) + 1):
-            word = ''.join(sorted(random_string[i:j]))
-            if word in dictionary and len(word) == word_length:
-                words.add(word)
-    return words
+    words = find_permutations(random_string, word_length)
+    valid_words=set()
+    for word in words:
+        if word in dictionary:
+            valid_words.add(word)
+    return valid_words
 
 def main():
     random_string = generate_random_string()
