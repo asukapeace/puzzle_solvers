@@ -38,6 +38,9 @@ def find_permutations(string, length):
     
 def generate_words(random_string, word_length, dictionary):
     """Generate all valid dictionary words of word_length from the 11 char string"""
+    if len(random_string) < word_length:
+        print("Word length cannot be greater than the length of the random string {}.".format(len(random_string)))
+        return set()
     return {w for w in find_permutations(random_string, word_length) if w in dictionary}
 
 def main():
